@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Simple Table Demo</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h2>Table 1</h2>
+    <table id="table1">
+        <thead>
+            <tr>
+                <th>Index #</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <h2>Table 2</h2>
+    <table id="table2">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Alpha</td>
+                <td id="alpha"></td>
+            </tr>
+            <tr>
+                <td>Beta</td>
+                <td id="beta"></td>
+            </tr>
+            <tr>
+                <td>Charlie</td>
+                <td id="charlie"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('data/Table_Input.csv')
+            .then(response => response.text())
+            .then(data => {
+                let rows = data.split('\n');
+                let table = document.getElementById('table1').getElementsByTagName('tbody')[0];
+
+                rows.slice(1).forEach(row => {
+                    let cols = row.split(',');
+                    let newRow = table.insertRow();
+                    cols.forEach(col => {
+                        let newCell = newRow.insertCell();
+                        newCell.textContent = col.trim();
+                    });
+                });
+
+                // Compute values for Table 2 from loaded data
+                let values = Object.fromEntries(rows.slice(1).map(r => r.split(',').map(e => e.trim())));
+                document.getElementById('alpha').textContent = parseInt(values['A5']) + parseInt(values['A20']);
+                document.getElementById('beta').textContent = parseFloat(values['A15']) / parseFloat(values['A7']);
+                document.getElementById('charlie').textContent = parseInt(values['A13']) * parseInt(values['A12']);
+            });
+        });
+    </script>
+</body>
+</html>
